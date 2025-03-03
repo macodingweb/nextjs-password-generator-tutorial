@@ -1,101 +1,71 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+import { TbLockPassword } from "react-icons/tb";
+import { LuClipboard } from "react-icons/lu";
+import { LuClipboardCheck } from "react-icons/lu";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [password, setPassword] = useState("");
+  const [length, setLength] = useState(4);
+  const [copy, setCopy] = useState(false);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const generatePassword = () => {
+    setPassword("");
+
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const symbols = "!@#$%^&*()_+[]{}|;:,.<>?";
+
+    const characters = uppercase + lowercase + numbers + symbols;
+
+    let generatePass = "";
+
+    for (let i = 0; i < length; i++) {
+      const randomChar = Math.floor(Math.random() * characters.length);
+      generatePass += characters[randomChar];
+    }
+
+    setPassword(generatePass);
+  }
+
+  const copyPassword = () => {
+    if (password) {
+      navigator.clipboard.writeText(password);
+      setCopy(true);
+
+      setTimeout(() => {
+        setCopy(false);
+      }, 2000);
+    }
+  }
+
+  return (
+    <div className="wrapper w-[400px] grid p-8 bg-white rounded-xl shadow-md">
+      <TbLockPassword size={36} className="text-purple-700 mx-auto mb-3" />
+      <div className="title text-center text-xl font-semibold text-purple-700 mb-5">Password Generator</div>
+      <div className="form-group grid">
+        <label htmlFor="length" className="text-slate-600">Length: <span className="text-black">{length}</span></label>
+        <div className="input flex my-2 items-center justify-between p-5 rounded-lg bg-slate-100">
+          <span>4</span>
+          <input type="range" name="length" id="length" defaultValue={4} onChange={(e) => setLength(Number(e.target.value))} className="w-full mx-2" min={4} max={32} />
+          <span>32</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+      <button type="button" onClick={generatePassword} className="w-full py-3 bg-slate-900 rounded-lg text-white my-3 cursor-pointer border-solid border-2 border-transparent transition-all hover:bg-transparent hover:text-slate-900 hover:border-slate-900">Generate Password</button>
+      <div className="password-area mt-4">
+        <div className="password-container relative">
+          <div className="w-full p-4 bg-slate-100 rounded-lg text-slate-600 select-none whitespace-nowrap">{ password ? password : "Password is..." }</div>
+          <button type="button" onClick={copyPassword} className="absolute top-2/4 -translate-y-2/4 right-0 h-full w-fit px-3 bg-slate-100 rounded-r-lg cursor-pointer transition-all hover:bg-slate-300">
+            { copy ? (
+              <LuClipboardCheck />
+            ) : (
+              <LuClipboard />
+            ) }
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
